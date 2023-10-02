@@ -18,5 +18,9 @@ namespace IntroMVC.Data
         public System.Data.Entity.DbSet<IntroMVC.Models.Product> Products { get; set; }
 
         public System.Data.Entity.DbSet<IntroMVC.Models.Category> Categories { get; set; }
+
+        public System.Data.Entity.DbSet<IntroMVC.Models.Student> Students { get; set; }
+
+        public System.Data.Entity.DbSet<IntroMVC.Models.Campus> Campus { get; set; }
     }
 }
