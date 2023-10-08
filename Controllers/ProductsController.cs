@@ -1,8 +1,10 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Drawing.Design;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using PagedList;
 using IntroMVC.Data;
 using IntroMVC.Models;
 using IntroMVC.ViewModels;
@@ -16,7 +18,7 @@ namespace IntroMVC.Controllers
         private IntroMVCContext db = new IntroMVCContext();
 
         // GET: Products
-        public ActionResult Index(string category, string search)
+        public ActionResult Index(string category, string search, string sortBy, int? page)
         {
             ProductIndexViewModel viewModel = new ProductIndexViewModel();
             var products = db.Products.Include(p => p.Category);
@@ -40,8 +42,29 @@ namespace IntroMVC.Controllers
             if (!string.IsNullOrEmpty(category))
             {
                 products = products.Where(p => p.Category.Name == category);
+                viewModel.Category = category;
             }
-            viewModel.Products = products;
+            switch (sortBy)
+            {
+                case "price_lowest":
+                    products = products.OrderBy(p => p.Price);
+                    break;
+                case "price_highest":
+                    products = products.OrderByDescending(p => p.Price);
+                    break;
+                default:
+                    products = products.OrderBy(p => p.Name);
+                    break;
+            }
+            viewModel.Sorts = new Dictionary<string, string>
+            {
+                {"Price low to high", "price_lowest" },
+                {"Price high to low", "price_highest" }
+            };
+            viewModel.SortBy = sortBy;
+            const int PageItems = 5;
+            int currentPage = (page ?? 1);
+            viewModel.Products = products.ToPagedList(currentPage, PageItems);
             return View(viewModel);
         }
 

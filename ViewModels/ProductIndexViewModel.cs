@@ -4,15 +4,18 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using IntroMVC.Models;
+using PagedList;
 
 namespace IntroMVC.ViewModels
 {
     public class ProductIndexViewModel
     {
-        public IQueryable<Product> Products { get; set; }
+        public IPagedList<Product> Products { get; set; }
         public string Search {  get; set; }
         public IEnumerable<CategoryWithCount> CatsWithCount { get; set; }
         public string Category {  get; set; }
+        public string SortBy { get; set; }
+        public Dictionary<string, string> Sorts { get; set; }
         public IEnumerable<SelectListItem> CatFilterItems
         {
             get
