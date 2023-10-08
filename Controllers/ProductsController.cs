@@ -1,9 +1,13 @@
 ﻿using System.Data.Entity;
+using System.Drawing.Design;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using IntroMVC.Data;
 using IntroMVC.Models;
+using IntroMVC.ViewModels;
+using Microsoft.Ajax.Utilities;
+using static IntroMVC.ViewModels.ProductIndexViewModel;
 
 namespace IntroMVC.Controllers
 {
@@ -12,10 +16,33 @@ namespace IntroMVC.Controllers
         private IntroMVCContext db = new IntroMVCContext();
 
         // GET: Products
-        public ActionResult Index()
+        public ActionResult Index(string category, string search)
         {
+            ProductIndexViewModel viewModel = new ProductIndexViewModel();
             var products = db.Products.Include(p => p.Category);
-            return View(products.ToList());
+            if (!string.IsNullOrEmpty(search))
+            {
+                products = products.Where(p => p.Name.Contains(search)
+                    || p.Description.Contains(search)
+                    || p.Category.Name.Contains(search));
+                viewModel.Search = search;
+            }
+            viewModel.CatsWithCount = from matchingProducts in products
+                                      where
+                                      matchingProducts.CategoryID != null
+                                      group matchingProducts by
+                                      matchingProducts.Category.Name into catGroup
+                                      select new CategoryWithCount()
+                                      {
+                                          CategoryName = catGroup.Key,
+                                          ProductCount = catGroup.Count()
+                                      };
+            if (!string.IsNullOrEmpty(category))
+            {
+                products = products.Where(p => p.Category.Name == category);
+            }
+            viewModel.Products = products;
+            return View(viewModel);
         }
 
         // GET: Products/Details/5
