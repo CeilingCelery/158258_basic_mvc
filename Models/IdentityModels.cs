@@ -29,5 +29,9 @@ namespace IntroMVC.Models
         {
             return new ApplicationDbContext();
         }
+        static ApplicationDbContext()
+        {
+            Database.SetInitializer<ApplicationDbContext>(new ApplicationDbInitializer());
+        }
     }
 }

@@ -25,6 +25,10 @@
                     <li>@Html.ActionLink("View all our Products", "Index", "Products", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("See our Students", "Index", "Students", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Student Campus Options", "Index", "Campus", new { area = "" }, new { @class = "nav-link" })</li>
+                    @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("Admin", "Index", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
                 </ul>
                 @using (Html.BeginForm("Index", "Products", FormMethod.Get, new { @class = "navbar-form navbar-left" }))
                 {
